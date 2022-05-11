@@ -16,11 +16,9 @@ NIVELMENUCAMBIARSTATEXTRA=105
 END=-1
 
 
-#def start( update, context):
 
-    #update.message.reply_text('¡Hola, Elena!')
 
-def start(update, context):
+def start(update, context):  
     
     #context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
     update.message.reply_markdown_v2('🐙 Bienvenid@ al asintente de *La llamada de Cthulhu 7ªED* 🐙\n\n'+
