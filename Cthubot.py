@@ -21,17 +21,18 @@ END=-1
 def start(update, context):  
     
     #context.bot.send_message(chat_id=update.effective_chat.id, text="I'm a bot, please talk to me!")
-    update.message.reply_markdown_v2('🐙 Bienvenid@ al asintente de *La llamada de Cthulhu 7ªED* 🐙\n\n'+
-    'Con este bot podrás crear una ficha de personaje y luego interactuar con ella para hacer tiradas o modificar los valores\.\n'+
-    'Recuerda interactuar siempre con el bot en tu *chat privado*, no en el chat de campaña\n\n'+
-    '•Usa /nuevaficha para entrar en el asistente de *creación de fichas*\.\n'+
-    '\tEs un proceso algo largo, así que ponte cómod@\.\n\n'+
-    '•Usa /ficha para *ver tu ficha*\.\n'+
-    '\tPulsa sobre un stat numérico para interactuar con él\. Todas las interacciones se enviarán al chat de la campaña\.\n'
-    '\tPulsa sobre un stat vacío para renombrarlo y, posteriormente, interactuar con él\.\n\n'
-    '•Usa /takechatid para obtener el identificador del chat en el que lances el comando\. Usalo en el chat de la campaña \(con el bot dentro del grupo\) y guarda el identificador\n\n'
-    '•Usa /putchatid XXXXXXXXXX donde las X corresponden al chat ID correspondiente para vincular tu ficha a un chat de campaña\. Así, las interacciones que realices con tu ficha se enviarán al chat de campaña\n\n'
-    '•Usa /salir dentro de cualquier menú para salir de él\.\n')
+    update.message.reply_html('🐙 Bienvenid@ al asintente de <b>La llamada de Cthulhu 7ªED</b> 🐙\n\n'+
+    'Con este bot podrás crear una ficha de personaje y luego interactuar con ella para hacer tiradas o modificar los valores.\n'+
+    'Recuerda interactuar siempre con el bot en tu <b>chat privado</b>, no en el chat de campaña\n\n'+
+    '•Usa /nuevaficha para entrar en el asistente de <b>creación de fichas</b>.\n'+
+    '\tEs un proceso algo largo, así que ponte cómod@.\n\n'+
+    '•Usa /ficha para <b>ver tu ficha</b>.\n'+
+    '\tPulsa sobre un stat numérico para interactuar con él. Todas las interacciones se enviarán al chat de la campaña.\n'
+    '\tPulsa sobre un stat vacío para renombrarlo y, posteriormente, interactuar con él.\n\n'
+    '•Usa /takechatid para obtener el identificador del chat en el que lances el comando. Usalo en el chat de la campaña (con el bot dentro del grupo) y guarda el identificador\n\n'
+    '•Usa /putchatid X donde las X corresponden al chat ID correspondiente para vincular tu ficha a un chat de campaña. Así, las interacciones que realices con tu ficha se enviarán al chat de campaña\n\n'
+    '•Usa /roll X donde X corresponde a una notación de dados (2d100, 3d6\+5, etc...) para hacer esa tirada.\n\n'
+    '•Usa /salir dentro de cualquier menú para salir de él.\n')
 
  
 def mostrarficha1(update,context):
@@ -256,15 +257,15 @@ def mostrarficha1(update,context):
 
         reply_markup1 = InlineKeyboardMarkup(keyboard1)
         reply_markup2 = InlineKeyboardMarkup(keyboard2)
-        update.message.reply_markdown_v2('Ficha de '+manejotextos.consultaStat("Jugador",str(update.message.chat.username))+'\.    Investigador: *'+manejotextos.consultaStat("Nombre",str(update.message.chat.username))+'*', reply_markup=reply_markup1, )
-       # update.message.reply_markdown_v2('hoja dos',reply_markup=reply_markup2)
+        update.message.reply_html('Ficha de '+manejotextos.consultaStat("Jugador",str(update.message.chat.username))+'.    Investigador: <b>'+manejotextos.consultaStat("Nombre",str(update.message.chat.username))+'</b>', reply_markup=reply_markup1, )
+       # update.message.reply_html('hoja dos',reply_markup=reply_markup2)
         return NIVELMOSTRARFICHA
 
     except FileNotFoundError: 
         
-        print(update)
+        #print(update)
         #print(update.message.chat.from_user.name)
-        update.message.reply_markdown_v2("Ficha de jugador/a *"+str(update.message.chat.username)+"* no encontrada\. \nPor favor, crea una nueva ficha usando el comando /nuevaficha")
+        update.message.reply_html("Ficha de jugador/a <b>"+str(update.message.chat.username)+"</b> no encontrada. \nPor favor, crea una nueva ficha usando el comando /nuevaficha")
         return END
 
 def menustatnumerico(update,context):
@@ -281,12 +282,12 @@ def menustatnumerico(update,context):
         [InlineKeyboardButton("Tirada de habilidad con dado de bonificación", callback_data='tiradabonificada')],
         [InlineKeyboardButton("Tirada de habilidad con dado de penalización", callback_data='tiradapenalizada')],
         [InlineKeyboardButton("Cambiar la estadística", callback_data='menucambiarstatnumerico')],
-        [InlineKeyboardButton("Ir atrás", callback_data='atrasmostrarficha')],        
+        [InlineKeyboardButton("Ir atrás", callback_data='atrasmostrarficha1')],        
     ]
 
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    query.edit_message_text("*"+ Memoriacomando +'*: '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username))+'     ¿Que quieres hacer?', reply_markup=reply_markup,parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    query.edit_message_text("<b>"+ Memoriacomando +'</b>: '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username))+'     ¿Que quieres hacer?', reply_markup=reply_markup,parse_mode=telegram.ParseMode.HTML )
     #
     return NIVELSTATNUMERICO
 
@@ -301,17 +302,17 @@ def tirada (update,context):
         
         resultado=''
 
-        if tirada[1]==1: resultado='*ÉXITO CRÍTICO*'
-        elif (tirada[1]>95 and valorStat<50) or (tirada[1]==100): resultado='*PIFIA*'
-        elif tirada[1]<=valorStat/5: resultado='*Éxito Extremo*'
-        elif tirada[1]<=valorStat/2: resultado='*Éxito Dificil*'
-        elif tirada[1]<=valorStat: resultado='*Éxito normal*'
-        elif tirada[1]>valorStat: resultado='*Fracaso*'
+        if tirada[1]==1: resultado='<b>ÉXITO CRÍTICO</b>'
+        elif (tirada[1]>95 and valorStat<50) or (tirada[1]==100): resultado='<b>PIFIA</b>'
+        elif tirada[1]<=valorStat/5: resultado='<b>Éxito Extremo</b>'
+        elif tirada[1]<=valorStat/2: resultado='<b>Éxito Dificil</b>'
+        elif tirada[1]<=valorStat: resultado='<b>Éxito normal</b>'
+        elif tirada[1]>valorStat: resultado='<b>Fracaso</b>'
 
-        text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada[1])+'   '+ Memoriacomando+': '+str(valorStat)
-        query.edit_message_text( text, parse_mode=telegram.ParseMode.MARKDOWN_V2)
+        text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada[1])+'   '+ Memoriacomando+': '+str(valorStat)
+        query.edit_message_text( text, parse_mode=telegram.ParseMode.HTML)
         
-        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada[1])+'   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada[1])+'   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML)
         return END
     except ValueError: 
         query = update.callback_query
@@ -321,17 +322,17 @@ def tirada (update,context):
         valorStat=int(manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)))
         resultado=''
 
-        if tirada[1]==1: resultado='*ÉXITO CRÍTICO*'
-        elif (tirada[1]>95 and valorStat<50) or (tirada[1]==100): resultado='*PIFIA*'
-        elif tirada[1]<=valorStat/5: resultado='*Éxito Extremo*'
-        elif tirada[1]<=valorStat/2: resultado='*Éxito Dificil*'
-        elif tirada[1]<=valorStat: resultado='*Éxito normal*'
-        elif tirada[1]>valorStat: resultado='*Fracaso*'
+        if tirada[1]==1: resultado='<b>ÉXITO CRÍTICO</b>'
+        elif (tirada[1]>95 and valorStat<50) or (tirada[1]==100): resultado='<b>PIFIA</b>'
+        elif tirada[1]<=valorStat/5: resultado='<b>Éxito Extremo</b>'
+        elif tirada[1]<=valorStat/2: resultado='<b>Éxito Dificil</b>'
+        elif tirada[1]<=valorStat: resultado='<b>Éxito normal</b>'
+        elif tirada[1]>valorStat: resultado='<b>Fracaso</b>'
 
-        text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada[1])+'   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat)
-        query.edit_message_text( text, parse_mode=telegram.ParseMode.MARKDOWN_V2)
+        text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada[1])+'   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat)
+        query.edit_message_text( text, parse_mode=telegram.ParseMode.HTML)
         
-        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada[1])+'   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada[1])+'   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML )
         return END
 def tiradabonificada (update,context):
     try:
@@ -352,15 +353,15 @@ def tiradabonificada (update,context):
 
         if decena1==0 and decena2==0 and unidad==10: tirada=100
 
-        if tirada==1: resultado='*ÉXITO CRÍTICO*'
-        elif (tirada>95 and valorStat<50) or (tirada==100): resultado='*PIFIA*'
-        elif tirada<=valorStat/5: resultado='*Éxito Extremo*'
-        elif tirada<=valorStat/2: resultado='*Éxito Dificil*'
-        elif tirada<=valorStat: resultado='*Éxito normal*'
-        elif tirada>valorStat: resultado='*Fracaso*'
+        if tirada==1: resultado='<b>ÉXITO CRÍTICO</b>'
+        elif (tirada>95 and valorStat<50) or (tirada==100): resultado='<b>PIFIA</b>'
+        elif tirada<=valorStat/5: resultado='<b>Éxito Extremo</b>'
+        elif tirada<=valorStat/2: resultado='<b>Éxito Dificil</b>'
+        elif tirada<=valorStat: resultado='<b>Éxito normal</b>'
+        elif tirada>valorStat: resultado='<b>Fracaso</b>'
 
-        query.edit_message_text( resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada)+' \(Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+'\)   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2)
-        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada)+' \(Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+'\)   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+        query.edit_message_text( resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada)+' (Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+')   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML)
+        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada)+' (Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+')   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML )
         return END
     except ValueError:
         query = update.callback_query
@@ -380,15 +381,15 @@ def tiradabonificada (update,context):
 
         if decena1==0 and decena2==0 and unidad==10: tirada=100
 
-        if tirada==1: resultado='*ÉXITO CRÍTICO*'
-        elif (tirada>95 and valorStat<50) or (tirada==100): resultado='*PIFIA*'
-        elif tirada<=valorStat/5: resultado='*Éxito Extremo*'
-        elif tirada<=valorStat/2: resultado='*Éxito Dificil*'
-        elif tirada<=valorStat: resultado='*Éxito normal*'
-        elif tirada>valorStat: resultado='*Fracaso*'
+        if tirada==1: resultado='<b>ÉXITO CRÍTICO</b>'
+        elif (tirada>95 and valorStat<50) or (tirada==100): resultado='<b>PIFIA</b>'
+        elif tirada<=valorStat/5: resultado='<b>Éxito Extremo</b>'
+        elif tirada<=valorStat/2: resultado='<b>Éxito Dificil</b>'
+        elif tirada<=valorStat: resultado='<b>Éxito normal</b>'
+        elif tirada>valorStat: resultado='<b>Fracaso</b>'
 
-        query.edit_message_text( resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada)+' \(Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+'\)   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2)
-        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada)+' \(Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+'\)   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+        query.edit_message_text( resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada)+' (Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+')   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML)
+        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada)+' (Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+')   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML )
         return END
 def tiradapenalizada (update,context):
     
@@ -409,15 +410,15 @@ def tiradapenalizada (update,context):
         else: tirada=decena1+unidad
         if decena1==0 and decena2==0 and unidad==10: tirada=100
 
-        if tirada==1: resultado='*ÉXITO CRÍTICO*'
-        elif (tirada>95 and valorStat<50) or (tirada==100): resultado='*PIFIA*'
-        elif tirada<=valorStat/5: resultado='*Éxito Extremo*'
-        elif tirada<=valorStat/2: resultado='*Éxito Dificil*'
-        elif tirada<=valorStat: resultado='*Éxito normal*'
-        elif tirada>valorStat: resultado='*Fracaso*'
+        if tirada==1: resultado='<b>ÉXITO CRÍTICO</b>'
+        elif (tirada>95 and valorStat<50) or (tirada==100): resultado='<b>PIFIA</b>'
+        elif tirada<=valorStat/5: resultado='<b>Éxito Extremo</b>'
+        elif tirada<=valorStat/2: resultado='<b>Éxito Dificil</b>'
+        elif tirada<=valorStat: resultado='<b>Éxito normal</b>'
+        elif tirada>valorStat: resultado='<b>Fracaso</b>'
 
-        query.edit_message_text( resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada)+' \(Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+'\)   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2)
-        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada)+' \(Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+'\)   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+        query.edit_message_text( resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada)+' (Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+')   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML)
+        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada)+' (Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+')   '+ Memoriacomando+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML )
         return END
     except ValueError:
         query = update.callback_query
@@ -436,15 +437,15 @@ def tiradapenalizada (update,context):
         else: tirada=decena1+unidad
         if decena1==0 and decena2==0 and unidad==10: tirada=100
 
-        if tirada==1: resultado='*ÉXITO CRÍTICO*'
-        elif (tirada>95 and valorStat<50) or (tirada==100): resultado='*PIFIA*'
-        elif tirada<=valorStat/5: resultado='*Éxito Extremo*'
-        elif tirada<=valorStat/2: resultado='*Éxito Dificil*'
-        elif tirada<=valorStat: resultado='*Éxito normal*'
-        elif tirada>valorStat: resultado='*Fracaso*'
+        if tirada==1: resultado='<b>ÉXITO CRÍTICO</b>'
+        elif (tirada>95 and valorStat<50) or (tirada==100): resultado='<b>PIFIA</b>'
+        elif tirada<=valorStat/5: resultado='<b>Éxito Extremo</b>'
+        elif tirada<=valorStat/2: resultado='<b>Éxito Dificil</b>'
+        elif tirada<=valorStat: resultado='<b>Éxito normal</b>'
+        elif tirada>valorStat: resultado='<b>Fracaso</b>'
 
-        query.edit_message_text( resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada)+' \(Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+'\)   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2)
-        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'\.\n'+"Tirada: "+str(tirada)+' \(Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+'\)   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+        query.edit_message_text( resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada)+' (Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+')   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML)
+        context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text=resultado+' de '+manejotextos.consultaStat('Nombre',str(query.message.chat.username))+'.\n'+"Tirada: "+str(tirada)+' (Dados: '+ str(decena1) + ' '+ str(decena2) +' ' +str(unidad)+')   '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+': '+str(valorStat), parse_mode=telegram.ParseMode.HTML )
         return END
 
 def menucambiarstatnumerico (update,context):
@@ -459,7 +460,7 @@ def menucambiarstatnumerico (update,context):
         [InlineKeyboardButton("Ir atrás", callback_data='atrasmostrarficha1')],        
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_text("*"+ Memoriacomando +'*: '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username))+'     ¿Que quieres hacer?', reply_markup=reply_markup,parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    query.edit_message_text("<b>"+ Memoriacomando +'</b>: '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username))+'     ¿Que quieres hacer?', reply_markup=reply_markup,parse_mode=telegram.ParseMode.HTML )
     return NIVELCAMBIARSTATNUMERICO
 
 def sumar1stat(update,context):
@@ -469,7 +470,7 @@ def sumar1stat(update,context):
     Memoriacomando=manejotextos.consultaStat('Memoriacomando',str(query.message.chat.username))
     manejotextos.sumaStat(Memoriacomando,1,str(query.message.chat.username))
     menucambiarstatnumerico(update,context)
-    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha incrementado su '+ Memoriacomando+' a '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha incrementado su '+ Memoriacomando+' a '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
     
 def sumar5stat(update,context):
     
@@ -478,7 +479,7 @@ def sumar5stat(update,context):
     Memoriacomando=manejotextos.consultaStat('Memoriacomando',str(query.message.chat.username))
     manejotextos.sumaStat(Memoriacomando,5,str(query.message.chat.username))
     menucambiarstatnumerico(update,context)
-    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha incrementado su '+ Memoriacomando+' a '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha incrementado su '+ Memoriacomando+' a '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
 
 def restar1stat(update,context):
     
@@ -487,7 +488,7 @@ def restar1stat(update,context):
     Memoriacomando=manejotextos.consultaStat('Memoriacomando',str(query.message.chat.username))
     manejotextos.restaStat(Memoriacomando,1,str(query.message.chat.username))
     menucambiarstatnumerico(update,context)
-    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha disminuido su '+ Memoriacomando+' a '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha disminuido su '+ Memoriacomando+' a '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
 
 def restar5stat(update,context):
     
@@ -496,7 +497,7 @@ def restar5stat(update,context):
     Memoriacomando=manejotextos.consultaStat('Memoriacomando',str(query.message.chat.username))
     manejotextos.restaStat(Memoriacomando,5,str(query.message.chat.username))
     menucambiarstatnumerico(update,context)
-    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha disminuido su '+ Memoriacomando+' a '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha disminuido su '+ Memoriacomando+' a '+ manejotextos.consultaStat(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
 
 
 def menustatextra(update,context):
@@ -515,14 +516,14 @@ def menustatextra(update,context):
             [InlineKeyboardButton("Ir atrás", callback_data='atrasmostrarficha1')],        
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text("*"+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username)) +'*: '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username))+'     ¿Que quieres hacer?', reply_markup=reply_markup,parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+        query.edit_message_text("<b>"+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username)) +'</b>: '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username))+'     ¿Que quieres hacer?', reply_markup=reply_markup,parse_mode=telegram.ParseMode.HTML )
 
     else: 
         keyboard = [
         [InlineKeyboardButton("Nombrar el stat", callback_data='nombrarstatextra')],      
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
-        query.edit_message_text("Este es un stat extra\. Para definirlo, pulsa sobre \"Nombrar el stat\"", reply_markup=reply_markup,parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+        query.edit_message_text("Este es un stat extra. Para definirlo, pulsa sobre \"Nombrar el stat\"", reply_markup=reply_markup,parse_mode=telegram.ParseMode.HTML )
 
     
     return NIVELMENUSTATEXTRA
@@ -530,7 +531,7 @@ def menustatextra(update,context):
 def nombrarstatextra(update,context):
     query = update.callback_query
     query.answer()
-    query.edit_message_text("Escribe a continuación el nombre para el stat extra y enviamelo",parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    query.edit_message_text("Escribe a continuación el nombre para el stat extra y enviamelo",parse_mode=telegram.ParseMode.HTML )
     return NIVELDECISIONNOMBRESTATEXTRA
 
 def decisionnombrestatextra(update,context):
@@ -555,7 +556,7 @@ def menucambiarstatextra (update,context):
         [InlineKeyboardButton("Ir atrás", callback_data='atrasmostrarficha1')],        
     ]
     reply_markup = InlineKeyboardMarkup(keyboard)
-    query.edit_message_text("*"+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username)) +'*: '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username))+'     ¿Que quieres hacer?', reply_markup=reply_markup,parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    query.edit_message_text("<b>"+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username)) +'</b>: '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username))+'     ¿Que quieres hacer?', reply_markup=reply_markup,parse_mode=telegram.ParseMode.HTML )
     return NIVELMENUCAMBIARSTATEXTRA
 
 def sumar1statextra(update,context):
@@ -565,7 +566,7 @@ def sumar1statextra(update,context):
     Memoriacomando=manejotextos.consultaStat('Memoriacomando',str(query.message.chat.username))
     manejotextos.sumaStatextra(Memoriacomando,1,str(query.message.chat.username))
     menucambiarstatextra(update,context)
-    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha incrementado su '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha incrementado su '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
     
 def sumar5statextra(update,context):
     
@@ -574,7 +575,7 @@ def sumar5statextra(update,context):
     Memoriacomando=manejotextos.consultaStat('Memoriacomando',str(query.message.chat.username))
     manejotextos.sumaStatextra(Memoriacomando,5,str(query.message.chat.username))
     menucambiarstatextra(update,context)
-    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha incrementado su '+manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha incrementado su '+manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
 
 def restar1statextra(update,context):
     
@@ -583,7 +584,7 @@ def restar1statextra(update,context):
     Memoriacomando=manejotextos.consultaStat('Memoriacomando',str(query.message.chat.username))
     manejotextos.restaStatextra(Memoriacomando,1,str(query.message.chat.username))
     menucambiarstatextra(update,context)
-    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha disminuido su '+manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha disminuido su '+manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
 
 def restar5statextra(update,context):
     
@@ -592,7 +593,7 @@ def restar5statextra(update,context):
     Memoriacomando=manejotextos.consultaStat('Memoriacomando',str(query.message.chat.username))
     manejotextos.restaStatextra(Memoriacomando,5,str(query.message.chat.username))
     menucambiarstatextra(update,context)
-    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha disminuido su '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha disminuido su '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
 
 def atrasmostrarficha1 (update,context):
     
@@ -769,7 +770,7 @@ def atrasmostrarficha1 (update,context):
           
     reply_markup = InlineKeyboardMarkup(keyboard1)
 
-    query.edit_message_text('Ficha de '+manejotextos.consultaStat("Jugador",str(query.message.chat.username))+'\. Investigador: *'+manejotextos.consultaStat("Nombre",str(query.message.chat.username))+'*', reply_markup=reply_markup,parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    query.edit_message_text('Ficha de '+manejotextos.consultaStat("Jugador",str(query.message.chat.username))+'. Investigador: <b>'+manejotextos.consultaStat("Nombre",str(query.message.chat.username))+'</b>', reply_markup=reply_markup,parse_mode=telegram.ParseMode.HTML )
     return NIVELMOSTRARFICHA
 
 def salir1(update,context):
@@ -781,7 +782,7 @@ def salir1(update,context):
 
 def stop(update,context):
 
-    update.message.reply_markdown_v2('Hasta pronto, *'+update.message.chat.username+'*')
+    update.message.reply_html('Hasta pronto, <b>'+update.message.chat.username+'</b>')
     return END
 
 def takechatid(update,context):
@@ -791,7 +792,7 @@ def takechatid(update,context):
     update.message.reply_text(text='El codigo de este chat es: ')
     update.message.reply_text(update.message.chat.id)
     update.message.reply_text(text='Guarda el código usando /putchatid en tu chat privado con el bot y los acciones de tu personaje se enviarán al chat del código')
-    print(update)
+    #print(update)
     #context.bot.send_message(chat_id=-1001691926925,text=update.message.chat.id )
 
 def putchatid(update,context):
@@ -801,21 +802,30 @@ def putchatid(update,context):
     try:    
         chatid=update.message.text[11:]
         ficha=update.message.chat.username
+        chatidantiguo=manejotextos.consultaStat('Chatid',str(ficha) )
+        
 	    
 
         if chatid:
-            manejotextos.cambioStat('Chatid',chatid,ficha)
-            update.message.reply_text(text='Personaje vinculado al chat con ID: '+ str(chatid))
-        
+            
+            try:
+                context.bot.send_message(chat_id=chatid,text= '<b>'+ficha+'</b> ha vinculado su personaje <b>'+ manejotextos.consultaStat('Nombre',str(ficha) ) +'</b> a este grupo.', parse_mode=telegram.ParseMode.HTML )
+                manejotextos.cambioStat('Chatid',chatid,ficha)
+                update.message.reply_text(text='Personaje vinculado al chat con ID: '+ str(chatid))
+                if chatidantiguo: 
+                    
+                    context.bot.send_message(chat_id=chatidantiguo,text= '<b>'+ficha+'</b> ha desvinculado su personaje <b>'+ manejotextos.consultaStat('Nombre',str(ficha) ) +'</b> de este grupo.', parse_mode=telegram.ParseMode.HTML )
+            except telegram.error.BadRequest: update.message.reply_text(text='No existe un chat con ese ID')
         else: update.message.reply_text(text='Error. Asegurate de escribir el chat ID a continuación del comando.')
 
     except IndexError: update.message.reply_text(text='Error. Asegurate de escribir el chat ID a continuación del comando.')
     
     
+    
 def roll(update,context):
 
     #/roll 1d100
-    #context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '*'+query.message.chat.username+'* ha disminuido su '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+    #context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(query.message.chat.username) ),text= '<b>'+query.message.chat.username+'</b> ha disminuido su '+ manejotextos.consultanombreStatextra(Memoriacomando,str(query.message.chat.username))+' a '+ manejotextos.consultavalorStatextra(Memoriacomando,str(query.message.chat.username)), parse_mode=telegram.ParseMode.HTML )
 
     #try:    
         peticiontirada=update.message.text[6:]
@@ -829,7 +839,7 @@ def roll(update,context):
             print(tirada[1])
             print(tirada[2])
             update.message.reply_text(text='Tirada de : '+ str(tirada[0])+'. Dados: '+ str(tirada[2])+ '. Valor final: '+str(tirada[1]))
-            context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(ficha)), text= '*'+manejotextos.consultaStat('Nombre',ficha)+'* ha sacado'+ str(tirada[1])+' en '+ tirada[0], parse_mode=telegram.ParseMode.MARKDOWN_V2 )
+            context.bot.send_message(chat_id=manejotextos.consultaStat('Chatid',str(ficha)), text= '<b>'+manejotextos.consultaStat('Nombre',ficha)+'</b> ha sacado '+ str(tirada[1])+' en '+ tirada[0], parse_mode=telegram.ParseMode.HTML )
         
         else: update.message.reply_text(text='Error. Asegurate de escribir la tirada (2d100, 3d4+2, 1d6+20...) a continuación del comando.')
     #except IndexError: update.message.reply_text(text='Error. aaaaaAsegurate de escribir la tirada (2d100, 3d4+2, 1d6+20...) a continuación del comando.')    
