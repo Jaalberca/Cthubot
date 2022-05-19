@@ -856,7 +856,8 @@ def setTrepar( update, context):
 	ficha=update.message.chat.username
 	manejotextos.cambioStat('Trepar',texto,ficha)
 	update.message.reply_html('<b>Trepar</b>: '+ manejotextos.consultaStat('Trepar', ficha) + '\nAhora escribe tu <b>Bonificación de daño</b>:' )
-	return SETBonificaciondano
+	update.message.reply_html('Muchas gracias por rellenar su ficha de investigador.\nQue disfrute perdiendo su Cordura' )
+	return END
 
 
 
